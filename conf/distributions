@@ -1,0 +1,31 @@
+Origin: Greg Logan <gregorydlogan@gmail.com>
+Label: Opencaste apt repository
+Codename: wheezy
+Architectures: amd64 source
+Components: main
+Description: Opencast Debian package repo
+SignWith: 9A7EA8E5B3820B26
+
+Origin: Greg Logan <gregorydlogan@gmail.com>
+Label: Opencaste apt repository
+Codename: jessie
+Architectures: amd64 source
+Components: main
+Description: Opencast Debian package repo
+SignWith: 9A7EA8E5B3820B26
+
+Origin: Greg Logan <gregorydlogan@gmail.com>
+Label: Opencaste apt repository
+Codename: trusty
+Architectures: amd64 source
+Components: main
+Description: Opencast Ubuntu package repo
+SignWith: 9A7EA8E5B3820B26
+
+Origin: Greg Logan <gregorydlogan@gmail.com>
+Label: Opencaste apt repository
+Codename: xenial
+Architectures: amd64 source
+Components: main
+Description: Opencast Ubuntu package repo
+SignWith: 9A7EA8E5B3820B26
