@@ -3,7 +3,18 @@
 sudo apt-get install reprepro
 
 rm -rf db dists lists pool
-reprepro -Vb . includedeb wheezy ../debs/*.deb
-reprepro -Vb . includedeb jessie ../debs/*.deb
-reprepro -Vb . includedeb trusty ../debs/*.deb
-reprepro -Vb . includedeb xenial ../debs/*.deb
+
+for suite in wheezy jessie trusty xenial
+do
+  reprepro -Vb . includedeb $suite ../debs/*.deb
+
+  ls ../debs/*.dsc | while read item
+  do
+    reprepro -Vb . includedsc $suite $item
+  done
+
+  ls ../debs/*.changes | while read item
+  do
+    reprepro -Vb . include $suite $item
+  done
+done
