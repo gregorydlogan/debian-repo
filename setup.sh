@@ -5,5 +5,5 @@ echo "deb http://build.openvpn.net/debian/freight_team $(lsb_release -sc) main" 
 sudo apt-get update
 sudo apt-get -y install freight
 
-mkdir -p /opt/freight
-chown -R $USER:$USER /opt/freight
+sudo mkdir -p /opt/freight
+sudo chown -R $USER:$USER /opt/freight
