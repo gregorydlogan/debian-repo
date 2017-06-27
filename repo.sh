@@ -2,12 +2,14 @@
 #suite=""
 suite="testing"
 
-for distro in jessie xenial
+for distro in jessie stretch xenial
 do
   freight add ../debs/*.deb apt/$distro/$suite
   freight add ../debs/*.dsc apt/$distro/$suite
   freight add ../debs/*.orig.* apt/$distro/$suite
   freight add ../debs/*.tar.xz apt/$distro/$suite
+  freight add ../debs/*.buildinfo apt/$distro/$suite
+  freight add ../debs/*.changes apt/$distro/$suite
 done
 freight cache
 
