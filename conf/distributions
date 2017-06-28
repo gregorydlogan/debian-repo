@@ -1,0 +1,23 @@
+Origin: Greg Logan <gregorydlogan@gmail.com>
+Label: Opencaste apt repository
+Codename: jessie
+Architectures: amd64 source
+Components: main testing
+Description: Opencast Debian package repo
+SignWith: 3259FFB3967266533FCD4B249A7EA8E5B3820B26
+
+Origin: Greg Logan <gregorydlogan@gmail.com>
+Label: Opencaste apt repository
+Codename: stretch
+Architectures: amd64 source
+Components: main testing
+Description: Opencast Debian package repo
+SignWith: 3259FFB3967266533FCD4B249A7EA8E5B3820B26
+
+Origin: Greg Logan <gregorydlogan@gmail.com>
+Label: Opencaste apt repository
+Codename: xenial
+Architectures: amd64 source
+Components: main testing
+Description: Opencast Debian package repo
+SignWith: 3259FFB3967266533FCD4B249A7EA8E5B3820B26
