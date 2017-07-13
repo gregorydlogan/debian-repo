@@ -1,0 +1,5 @@
+- Install mini-dinstall
+- run mini-dinstall -vbc mini-dinstall.conf
+- Copy debs, dsc, changes, buildinfo, sources into d-install/mini-dinstall/incoming
+- run mini-dinstall -vbc mini-dinstall.conf again
+- run sync.sh to copy to testing repo
