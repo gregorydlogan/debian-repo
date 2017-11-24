@@ -1,5 +1,15 @@
 - Install mini-dinstall
 - Symlink (or move) incoming binaries to binaries (eg: binaries/3.1, binaries/4.x)
+
+For bulk updates:
+
+- bash rebuild.sh
+- bash sync.sh
+
+Individually:
+
+- bash build.sh
+- bash link.sh $name
 - bash build.sh
 - bash sync.sh
 
