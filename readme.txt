@@ -1,7 +1,5 @@
 - Install mini-dinstall
-- bash build.sh
 - Symlink (or move) incoming binaries to binaries (eg: binaries/3.1, binaries/4.x)
-- bash link.sh $version (eg: bash link.sh 3.1, bash link.sh 4.x)
 - bash build.sh
 - bash sync.sh
 
