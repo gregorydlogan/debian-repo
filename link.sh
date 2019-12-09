@@ -19,7 +19,7 @@ do
   if [[ "$dsc" != *"-1.dsc" ]]; then
     sourceFile=$baseDir/d-install/mini-dinstall/incoming/`grep orig.tar.xz $dsc | head -n 1 | cut -f 4 -d " "`
     if [[ ! -f "$sourceFile" ]]; then
-      echo "$sourceFile does not exist"
+      #echo "$sourceFile does not exist"
       #We've likely already processed this, if not it will be picked up in the final build
       continue
     fi
