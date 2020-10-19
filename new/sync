@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#Note that we really, really want H and l to preserve any linking!
+rsync -avhSPuKHlc aptly/public/ root@repo:/var/www/repo/
+rsync -avhSPuKHlc aptly/public/ greglogan@pkg.opencast.org:/srv/www/pkg.opencast.org/debs/

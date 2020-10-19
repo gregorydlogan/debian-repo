@@ -1,0 +1,45 @@
+#!/bin/bash
+
+if [ $# -lt 1 -o $# -gt 2 ];
+then
+  echo "Usage: $0 branch [key_id] -> Creates a snapshot all of the components for the branch, and publishes them with the right Elasticsearch version.  Optionally set the gpg key ID to use for signing."
+  echo " eg: $0 10.x -> Creates three snapshots and publishes them with elasticsearch 7.9"
+  echo "NOTE: If you are seeing errors about a missing snapshot named \$date-\$branch-es, try running update-mirror.  This script is assuming that update-mirror has been run *today*."
+  exit 1
+fi
+
+today=`date --utc +%FT%H%M%SZ`
+branch=$1
+keyId="3259FFB3967266533FCD4B249A7EA8E5B3820B26"
+if [ $# -eq 2 ]; then
+  keyId="$2"
+fi
+
+for comp in stable testing unstable; do
+  #What should today's snapshot for this branch+component be called
+  snapshot="$today-$branch-$comp"
+  snapshot_oc="$snapshot-oc"
+  
+  #Create a new snapshot of the OC binaries
+  if [ -n "`aptly -config=./aptly.conf snapshot list -raw | grep $snapshot-oc`" ]; then
+    echo "Deleting pre-existing snapshot $snapshot and $snapshot-oc"
+    aptly -config=./aptly.conf snapshot drop $snapshot
+    aptly -config=./aptly.conf snapshot drop $snapshot-oc
+  fi
+  aptly -config=./aptly.conf snapshot create $snapshot_oc from repo $branch-$comp
+
+  #Figure out which ES snapshot to use, if any are applicable
+  snapshot_es=`aptly -config=./aptly.conf snapshot list -raw | grep $branch-$comp-es | sort -n | tail -n 1`
+
+  #Merge them into a single snapshot so it's publishable
+  aptly -config=./aptly.conf snapshot merge $snapshot $snapshot_oc $snapshot_es
+done
+
+if [ -z "`aptly -config=./aptly.conf publish list -raw | grep $branch`" ]; then
+  #Publish the new branch
+  aptly -config=./aptly.conf publish snapshot -gpg-key="$keyId" -component=stable,testing,unstable -distribution=$branch $today-$branch-stable $today-$branch-testing $today-$branch-unstable filesystem:public:
+else
+  for comp in stable testing unstable; do
+    aptly -config=./aptly.conf publish switch -gpg-key="$keyId" -component=$comp $branch filesystem:public: $today-$branch-$comp
+  done
+fi

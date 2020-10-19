@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ $# -ne 3 ];
+then
+  echo "Usage: $0 opencast_branch min_version max_version -> Creates a mirror of the Elasticsearch repository with with the right version requirements for Opencast's branch."
+  echo " eg: $0 9.x 7.9.2 7.10.0 -> Creates an 'es-9.x' mirror, restricted to Elasticsearch >= 7.9.2, and < 7.10.0"
+  exit 1
+fi
+
+today=`date +%F`
+ocBranch=$1
+minVersion=$2
+maxVersion=$3
+esBranch="`echo $minVersion | cut -c 1`"
+
+for ocComponent in stable testing unstable; do
+  mirrorName="es-$ocBranch-$ocComponent"
+  if [ -z "`aptly -config=./aptly.conf mirror list -raw | grep $mirrorName`" ]; then
+    aptly -config=./aptly.conf -architectures=amd64 mirror create -keyring=./trusted.gpg -filter="elasticsearch-oss (>=$minVersion) {amd64}, \$Version (<<$maxVersion)" $mirrorName https://artifacts.elastic.co/packages/oss-$esBranch.x/apt stable main
+  else
+    echo "Mirror $mirrorName already exists!"
+  fi
+done

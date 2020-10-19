@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $# -ne 1 ];
+then
+  echo "Usage: $0 branch -> Drops all publication of a given branch."
+  echo " eg: $0 10.x -> Drops publication of everything 10.x related"
+  exit 1
+fi
+
+aptly -config=./aptly.conf publish drop $1 filesystem:public:

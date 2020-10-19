@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ $# -ne 1 ];
+then
+  echo "Usage: $0 branch -> Lists the packages published by all of the snapshots published as this branch."
+  echo " eg: $0 10.x -> Lists the packages in the currently published stable, testing, and unstable snapshots."
+  exit 1
+fi
+
+aptly -config=./aptly.conf publish show $1 filesystem:public: | grep snapshot | cut -f 2 -d ":" | cut -f 1 -d "[" | sort | while read line
+do
+  echo -e "\nSnapshot $line:"
+  aptly -config=./aptly.conf snapshot show -with-packages $line
+done

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ $# -ne 2 ];
+then
+  echo "Usage: $0 branch prefix -> Lists the packages in all of the snapshots prefixed by prefix matching the branch."
+  echo " eg: $0 10.x 2020-10-17 -> Lists the packages in the snapshots matching 2020-10-17 on branch 10.x."
+  exit 1
+fi
+
+aptly -config=./aptly.conf snapshot list -raw | grep $1 | grep $2 | sort | while read line
+do
+  echo -e "\nSnapshot $line:"
+  aptly -config=./aptly.conf snapshot show -with-packages $line
+done

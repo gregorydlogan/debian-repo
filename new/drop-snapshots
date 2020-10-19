@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ $# -lt 2 -o $# -gt 3 ];
+then
+  echo "Usage: $0 branch type [YYYY-MM-DD] -> Drops all snapshots of type for a branch created today, or optionally with a specific date."
+  echo " eg: $0 10.x oc -> Drops snapshots $today-10.x-[stable,testing,unstable] and \$today-10.x-[stable,testing,unstable]-oc"
+  echo " eg: $0 10.x oc 2020-12-17 -> Drops snapshots 2020-12-17-10.x-[stable,testing,unstable] and 2020-12-17-10.x-[stable,testing,unstable]-oc"
+  exit 1
+fi
+
+if [ $# -eq 3 ]; then
+  today=$3
+else
+  today=`date +%F`
+fi
+branch=$1
+
+for comp in stable testing unstable; do
+  #What should today's snapshot for this branch+component be called
+  snapshot="$today-$branch-$comp"
+  snapshot_oc="$snapshot-$2"
+  
+  aptly -config=./aptly.conf snapshot drop $snapshot
+  aptly -config=./aptly.conf snapshot drop $snapshot_oc
+done
+

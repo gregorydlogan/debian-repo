@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $# -ne 1 ];
+then
+  echo "Usage: $0 branch -> Lists the snapshots against this branch."
+  echo " eg: $0 10.x -> Lists the snapshots on the 10.x repository."
+  exit 1
+fi
+
+aptly -config=./aptly.conf snapshot list -raw | grep $1

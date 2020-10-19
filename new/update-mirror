@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ $# -ne 2 ];
+then
+  echo "Usage: $0 opencast_branch opencast_component -> Updates the mirror of the Elasticsearch repository matching an Opencast branch and component."
+  echo " eg: $0 9.x stable -> Updates the 'es-9.x-stable' mirror and snapshots it as \$today-9.x-stable-es"
+  echo "NOTE: Mirror must exist first, and updates are not automatically published!"
+  exit 1
+fi
+
+today=`date +%F`
+ocBranch=$1
+ocComponent=$2
+
+mirrorName="es-$ocBranch-$ocComponent"
+aptly -config=./aptly.conf mirror -keyring=./trusted.gpg update $mirrorName
+aptly -config=./aptly.conf snapshot create $today-$ocBranch-$ocComponent-es from mirror $mirrorName

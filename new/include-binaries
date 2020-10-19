@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ $# -ne 3 ];
+then
+  echo "Usage: $0 opencast_branch opencast_component change_file -> Includes a set of binaries into the repository."
+  echo " eg: $0 9.x unstable \$filename -> Includes \$filename in 9.x's unstable component"
+  echo "NOTE: Branch and component must exist first, and updates are not automatically published!"
+  exit 1
+fi
+
+ocBranch=$1
+ocComponent=$2
+ocFiles=$3
+
+repoName="$ocBranch-$ocComponent"
+
+aptly -config=./aptly.conf repo include -keyring=./trusted.gpg -repo=$repoName $ocFiles

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ $# -ne 1 ];
+then
+  echo "Usage: $0 branch -> Creates all of the components for a new branch."
+  echo " eg: $0 10.x -> Creates 10.x-stable, 10.x-testing, and 10.x-unstable"
+  exit 1
+fi
+
+branch=$1
+
+for comp in stable testing unstable; do
+  echo "Creating repo $branch-$comp"
+  aptly -config=./aptly.conf repo create -comment="$branch $comp packages" -distribution="$branch" -component=$comp $branch-$comp
+done
+

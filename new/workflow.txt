@@ -1,0 +1,32 @@
+Before everythign else: build-keys -> creates/updates the signing keystore.  Do this if you're having issues with incoming packages or mirrors not being signed properly
+
+Publishing a new branch:
+- create-branch [branch]
+- create-es-mirror [branch] [version] [verision++]
+- update-mirror [branch] [component] -> Start with the stable component, only needs testing or unstable if we're playing with ES versions (see below)
+- include-binaries [branch] [component] [changes file]
+- publish-branch [branch]
+- push
+
+Oops, I broke something (ie, bad packages, added to the wrong repo)
+- If you've published already
+  - drop-publish [branch]
+- drop-snapshots [branch] [component] [YYYY-MM-DD]
+- drop-[external|oc]-package [branch] [component] [packagename] [version]
+NOTE: Removing a package from *all* repos and snapshots will remove it completely from the filesystem!
+NOTE: Until you push all changes are local.  Unless you're on pkg.  Don't do that.
+
+Promote a package (ie, testing to stable)
+- copy-[external|oc]-package [branch] [src component] [dest component] [package name] [version]
+- If you have published or otherwise created a snapshot today
+  - drop-publish [branch]
+  - drop-snapshots [branch] [dest component]
+- drop-[external|oc]-package [branch] [src component] [packagename] [version]
+- publish-branch [branch]
+- push
+
+Updating ES versions with a pre-existing branch:
+- edit-es-mirror [branch] [component] [version] [version++]
+- update-mirror [branch] [component]
+- publish-branch [branch]
+- push
