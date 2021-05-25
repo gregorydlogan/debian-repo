@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ $# -ne 3 ];
+then
+  echo "Usage: $0 mirror_type opencast_branch component -> Delete a mirror completely."
+  echo " eg: $0 es 10.x stable -> Drop the elasticsearch mirror for Opencast 10.x stable"
+  exit 1
+fi
+
+mirrorType=$1
+ocVersion=$2
+ocComponent=$3
+
+aptly -config=./aptly.conf mirror drop $mirrorType-$ocVersion-$ocComponent
+

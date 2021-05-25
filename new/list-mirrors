@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ $# -ne 1 ];
+then
+  echo "Usage: $0 opencast_branch -> List the mirrors for a branch."
+  echo " eg: $0 9.x -> List all mirrors related to 9.x"
+  exit 1
+fi
+
+
+
+aptly -config=./aptly.conf mirror list -raw | grep $1
