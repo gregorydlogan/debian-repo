@@ -16,7 +16,7 @@ esBranch="`echo $minVersion | cut -c 1`"
 for ocComponent in stable testing unstable; do
   mirrorName="es-$ocBranch-$ocComponent"
   if [ -z "`aptly -config=./aptly.conf mirror list -raw | grep $mirrorName`" ]; then
-    aptly -config=./aptly.conf -architectures=amd64 mirror create -keyring=./trusted.gpg -filter="elasticsearch-oss (>=$minVersion) {amd64}, \$Version (<<$maxVersion)" $mirrorName https://artifacts.elastic.co/packages/oss-$esBranch.x/apt stable main
+    aptly -config=./aptly.conf -architectures=amd64 mirror create -keyring=./trusted.gpg -filter="elasticsearch (>=$minVersion) {amd64}, \$Version (<<$maxVersion)" $mirrorName https://artifacts.elastic.co/packages/$esBranch.x/apt stable main
   else
     echo "Mirror $mirrorName already exists!"
   fi

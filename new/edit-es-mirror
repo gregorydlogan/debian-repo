@@ -15,7 +15,7 @@ esBranch="`echo $minVersion | cut -c 1`"
 
 mirrorName="es-$ocBranch-$component"
 if [ -n "`aptly -config=./aptly.conf mirror list -raw | grep $mirrorName`" ]; then
-  aptly -config=./aptly.conf -architectures=amd64 mirror edit -keyring=./trusted.gpg -filter="elasticsearch-oss (>=$minVersion) {amd64}, \$Version (<<$maxVersion)" $mirrorName
+  aptly -config=./aptly.conf -architectures=amd64 mirror edit -keyring=./trusted.gpg -filter="elasticsearch (>=$minVersion) {amd64}, \$Version (<<$maxVersion)" $mirrorName
 else
   echo "Mirror $mirrorName doesn't exist!"
 fi
