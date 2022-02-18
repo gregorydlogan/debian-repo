@@ -1,9 +1,10 @@
 #!/bin/bash
 
-if [ $# -lt 1 -o $# -gt 2 ];
+if [ $# -lt 1 -o $# -gt 3 ];
 then
-  echo "Usage: $0 branch [key_id] -> Creates a snapshot all of the components for the branch, and publishes them with the right Elasticsearch version.  Optionally set the gpg key ID to use for signing."
+  echo "Usage: $0 branch [key_id] [filesystem/s3]-> Creates a snapshot all of the components for the branch, and publishes them with the right Elasticsearch version.  Optionally set the gpg key ID to use for signing."
   echo " eg: $0 10.x -> Creates three snapshots and publishes them with elasticsearch 7.9"
+  echo " eg: $0 10.x s3 -> Creates three snapshots and publishes them with elasticsearch 7.9 to s3"
   echo "NOTE: If you are seeing errors about a missing snapshot named \$date-\$branch-es, try running update-mirror.  This script is assuming that update-mirror has been run *today*."
   exit 1
 fi
@@ -11,8 +12,14 @@ fi
 today=`date --utc +%FT%H%M%SZ`
 branch=$1
 keyId="3259FFB3967266533FCD4B249A7EA8E5B3820B26"
-if [ $# -eq 2 ]; then
+if [ $# -ge 2 ]; then
   keyId="$2"
+fi
+target="filesystem"
+if [ $# -eq 3 ]; then
+  target="s3:s3"
+else
+  target="filesystem:public"
 fi
 
 for comp in stable testing unstable; do
@@ -35,11 +42,11 @@ for comp in stable testing unstable; do
   aptly -config=./aptly.conf snapshot merge $snapshot $snapshot_oc $snapshot_es
 done
 
-if [ -z "`aptly -config=./aptly.conf publish list -raw | grep $branch`" ]; then
+if [ -z "`aptly -config=./aptly.conf publish list -raw | grep $target | grep $branch`" ]; then
   #Publish the new branch
-  aptly -config=./aptly.conf publish snapshot -gpg-key="$keyId" -component=stable,testing,unstable -distribution=$branch $today-$branch-stable $today-$branch-testing $today-$branch-unstable filesystem:public:
+  aptly -config=./aptly.conf publish snapshot -gpg-key="$keyId" -component=stable,testing,unstable -distribution=$branch $today-$branch-stable $today-$branch-testing $today-$branch-unstable $target:
 else
   for comp in stable testing unstable; do
-    aptly -config=./aptly.conf publish switch -gpg-key="$keyId" -component=$comp $branch filesystem:public: $today-$branch-$comp
+    aptly -config=./aptly.conf publish switch -gpg-key="$keyId" -component=$comp $branch $target: $today-$branch-$comp
   done
 fi
