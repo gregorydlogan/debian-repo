@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ $# -lt 1 -o $# -gt 2 ];
+then
+  echo "Usage: $0 opencast_branch [count] -> Removes all but [count, default 5 ] builds from unstable repository."
+  echo " eg: $0 9.x -> Removes all but the last 5 builds from the unstable 9.x repository"
+  echo " eg: $0 9.x 2 -> Removes all but the last 2 builds from the unstable 9.x repository"
+  exit 1
+fi
+
+branch=$1
+count=5
+if [ $# -eq 2 ]; then
+  count=$2
+fi
+
+echo "Cleaning $branch, leaving the last $count builds in the repo"
+
+./list-repo-package-versions $branch | grep common_$branch | tail -n +$count | cut -f 2 -d "_" | while read line
+do
+  ./drop-oc-package $branch unstable $line
+done
