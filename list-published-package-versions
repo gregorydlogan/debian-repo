@@ -1,13 +1,19 @@
 #!/bin/bash
 
-if [ $# -ne 1 ];
+if [ $# -lt 1 -o $# -gt 2 ];
 then
-  echo "Usage: $0 branch -> Lists the packages published by all of the snapshots published as this branch."
+  echo "Usage: $0 branch [filesystem/s3] -> Lists the packages published by all of the snapshots published as this branch."
   echo " eg: $0 10.x -> Lists the packages in the currently published stable, testing, and unstable snapshots."
+  echo " eg: $0 10.x s3 -> Lists the packages in the currently published stble, testing, and unstable snapshots on s3."
   exit 1
 fi
 
-aptly -config=./aptly.conf publish show $1 filesystem:public: | grep snapshot | cut -f 2 -d ":" | cut -f 1 -d "[" | sort | while read line
+target="filesystem:public:"
+if [ $# -eq 2 ]; then
+  target="s3:s3:"
+fi
+
+aptly -config=./aptly.conf publish show $1 $target | grep snapshot | cut -f 2 -d ":" | cut -f 1 -d "[" | sort | while read line
 do
   echo -e "\nSnapshot $line:"
   aptly -config=./aptly.conf snapshot show -with-packages $line
