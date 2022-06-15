@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ $# -lt 5 -o $# -gt 6 ];
+then
+  echo "Usage: $0 package_name version repo [repo] source_component dest_component -> Copies a package from a source branch+component to a dest branch+component."
+  echo " eg: $0 ffmpeg-dist 4.3.0-1 9.x testing stable -> Copies all ffmpeg-dist 4.3.0-1 packages from testing to stable, if they exist."
+  echo " eg: $0 ffmpeg-dist 4.3.0-1 9.x 10.x testing stable -> Copies all ffmpeg-dist 4.3.0-1 packages from 9.x testing to 10.x stable, if they exist."
+  exit 1
+fi
+
+packageName=$1
+packageVersion=$2
+
+if [ $# -eq 5 ]; then
+  srcBranch=$3
+  destBranch=$3
+  ocSrcComponent=$4
+  ocDestComponent=$5
+elif [ $# -eq 6 ]; then
+  srcBranch=$3
+  destBranch=$4
+  ocSrcComponent=$5
+  ocDestComponent=$6
+fi
+
+srcRepo="$srcBranch-$ocSrcComponent"
+destRepo="$destBranch-$ocDestComponent"
+
+aptly -config=./aptly.conf repo copy $srcRepo $destRepo "Name (% $packageName*), \$Version (=$packageVersion)"
+
