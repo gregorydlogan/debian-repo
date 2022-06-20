@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ $# -ne 5 ];
+then
+  echo "Usage: $0 package_name version repo source_component dest_component -> Promote a package from a source component to a dest component."
+  echo " eg: $0 ffmpeg-dist 4.3.0-1 9.x testing stable -> Promotes ffmpeg-dist 4.3.0-1 package from testing to stable, if they exist."
+  exit 1
+fi
+
+packageName=$1
+packageVersion=$2
+
+srcBranch=$3
+destBranch=$3
+ocSrcComponent=$4
+ocDestComponent=$5
+
+srcRepo="$srcBranch-$ocSrcComponent"
+destRepo="$destBranch-$ocDestComponent"
+
+./copy-package $packageName $packageVersion $srcBranch $ocSrcComponent $ocDestComponent
+./drop-package $srcBranch $ocSrcComponent $packageName $packageVersion
+
