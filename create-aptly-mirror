@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#We need 1.4.0, at the very least
+aptly -config=./aptly.conf -architectures=amd64 mirror create -keyring=./trusted.gpg -filter="aptly (>=1.4.0) {amd64}" aptly-upstream http://repo.aptly.info/ squeeze main
+aptly -config=./aptly.conf -keyring=./trusted.gpg mirror update aptly-upstream
+aptly -config=./aptly.conf -keyring=./trusted.gpg snapshot create aptly from mirror aptly-upstream
+aptly -config=./aptly.conf -keyring=./trusted.gpg publish snapshot aptly aptly
