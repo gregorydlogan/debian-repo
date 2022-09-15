@@ -18,6 +18,6 @@ echo "Cleaning $branch, leaving the last $count builds in the repo"
 
 ./list-repo-package-versions $branch | grep common_$branch | tail -n +$count | cut -f 2 -d "_" | while read line
 do
-  ./drop-package $branch unstable $line
+  ./drop-package $branch unstable opencast-$branch $line
 done
 aptly -config=./aptly.conf db cleanup
