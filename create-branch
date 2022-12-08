@@ -13,4 +13,21 @@ for comp in stable testing unstable; do
   echo "Creating repo $branch-$comp"
   aptly -config=./aptly.conf repo create -comment="$branch $comp packages" -distribution="$branch" -component=$comp $branch-$comp
 done
+
+./create-es-mirror $branch 7.10.2 7.10.3
+./drop-mirror es $branch testing
+./drop-mirror es $branch unstable
+./update-mirror $branch stable
+
+
+maj=`echo $branch | cut -c -2`
+source_branch="$(($maj-1))"
+for package in ffmpeg-dist opensearch-dist tobira
+do
+  name=`./list-repo-package-versions $source_branch.x | grep $package | head -n 1 | tr -d ' '`
+  version=`echo $name | cut -f 2 -d "_"`
+  ./copy-package $package $version $source_branch.x $branch stable stable
+done
+echo "Copied latest ffmpeg-dist, opensearch-dist, and tobira"
+
 echo "Done"
