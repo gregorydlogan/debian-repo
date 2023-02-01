@@ -1,0 +1,13 @@
+#!/bin/bash
+
+today=`date --utc +%FT%H%M%SZ`
+
+aptly -config=./aptly.conf repo include -keyring=./trusted.gpg -repo=tobira $1
+
+snapshot="$today-tobira"
+#Create a new snapshot 
+if [ -n "`aptly -config=./aptly.conf snapshot list -raw | grep $snapshot-oc`" ]; then
+  echo "Deleting pre-existing snapshot $snapshot and $snapshot-oc"
+  aptly -config=./aptly.conf snapshot drop $snapshot
+fi
+aptly -config=./aptly.conf snapshot create $snapshot from repo tobira
