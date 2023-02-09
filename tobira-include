@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ $# -ne 1 ];
+then
+  echo "Usage: $0 change_file -> Includes a set of binaries into the tobira repository."
+  echo " eg: $0 \$filename -> Includes \$filename in tobira's repo"
+  echo "NOTE: Repo exist first, and updates are not automatically published!"
+  exit 1
+fi
+
 today=`date --utc +%FT%H%M%SZ`
 
 aptly -config=./aptly.conf repo include -keyring=./trusted.gpg -repo=tobira $1
