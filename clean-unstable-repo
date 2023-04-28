@@ -16,8 +16,10 @@ fi
 
 echo "Cleaning $branch, leaving the last $count builds in the repo"
 
-./list-repo-package-versions $branch | grep common_$branch | tail -n +$count | cut -f 2 -d "_" | while read line
+#We have with a .x, we need to strip the .x component off for the grep here...
+pkg_version="${branch::-2}"
+./list-repo-package-versions $branch | grep common_$pkg_version | tail -n +$count | cut -f 2 -d "_" | while read line
 do
-  ./drop-package $branch unstable opencast-$branch $line
+  ./drop-package $branch unstable opencast $line
 done
 aptly -config=./aptly.conf db cleanup
