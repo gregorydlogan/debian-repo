@@ -37,14 +37,15 @@ for comp in stable testing unstable; do
 
   #Figure out which ES snapshot to use, if any are applicable
   snapshot_es=`aptly -config=./aptly.conf snapshot list -raw | grep $branch-$comp-es | sort -n | tail -n 1`
+  snapshot_os=`aptly -config=./aptly.conf snapshot list -raw | grep $branch-$comp-os | sort -n | tail -n 1`
 
   snapshot_tobira=`aptly -config=./aptly.conf snapshot list -raw | grep tobira | sort -n | tail -n 1`
 
   #Merge them into a single snapshot so it's publishable
   if [ "stable" == "$comp" ]; then
-    aptly -config=./aptly.conf snapshot merge $snapshot $snapshot_oc $snapshot_es $snapshot_tobira
+    aptly -config=./aptly.conf snapshot merge $snapshot $snapshot_oc $snapshot_es $snapshot_os $snapshot_tobira
   else
-    aptly -config=./aptly.conf snapshot merge $snapshot $snapshot_oc $snapshot_es
+    aptly -config=./aptly.conf snapshot merge $snapshot $snapshot_oc $snapshot_es $snapshot_os
   fi
 done
 

@@ -15,9 +15,13 @@ for comp in stable testing unstable; do
 done
 
 ./create-es-mirror $branch 7.10.2 7.10.3
+./create-os-mirror $branch 1.3.3 2.0.0
 ./drop-mirror es $branch testing
+./drop-mirror os $branch testing
 ./drop-mirror es $branch unstable
-./update-mirror $branch stable
+./drop-mirror os $branch unstable
+./update-mirror $branch stable es
+./update-mirror $branch stable os
 
 
 maj=`echo $branch | cut -c -2`
