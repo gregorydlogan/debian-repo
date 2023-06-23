@@ -1,0 +1,1 @@
+s3fs -o use_path_request_style -o url=https://radosgw.public.os.wwu.de/ -o uid=1000,gid=1000,umask=0000 opencast-pkg aptly
