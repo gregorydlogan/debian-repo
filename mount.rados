@@ -6,7 +6,7 @@ export AWSSECRETACCESSKEY="$AWSSECRETACCESSKEY"
 ENDPOINT="https://radosgw.public.os.wwu.de/"
 BUCKET="opencast-ci"
 PARAMS="-o use_path_request_style -o del_cache -o url=$ENDPOINT -o uid=1000,gid=1000,umask=0000"
-MOUNTPOINT="aptly"
+MOUNTPOINT="/builder/s3/repo/debs"
 
 mkdir -p $MOUNTPOINT
 
