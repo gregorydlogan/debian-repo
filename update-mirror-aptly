@@ -4,6 +4,6 @@ today=`date +%F`
 mirrorName="aptly-upstream"
 
 aptly -config=./aptly.conf mirror -keyring=./trusted.gpg update $mirrorName
+aptly -config=./aptly.conf snapshot drop $today-aptly
 aptly -config=./aptly.conf snapshot create $today-aptly from mirror $mirrorName
-aptly -config=./aptly.conf publish drop squeeze filesystem:public:debian/aptly
-aptly -config=./aptly.conf publish snapshot -gpg-key=3259FFB3967266533FCD4B249A7EA8E5B3820B26 aptly filesystem:public:aptly
+aptly -config=./aptly.conf publish snapshot -gpg-key=3259FFB3967266533FCD4B249A7EA8E5B3820B26 $today-aptly "s3:s3:./aptly"

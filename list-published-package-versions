@@ -3,14 +3,14 @@
 if [ $# -lt 1 -o $# -gt 2 ];
 then
   echo "Usage: $0 branch [filesystem/s3] -> Lists the packages published by all of the snapshots published as this branch."
-  echo " eg: $0 10.x -> Lists the packages in the currently published stable, testing, and unstable snapshots."
+  echo " eg: $0 10.x -> Lists the packages in the currently published stable, testing, and unstable snapshots in the default storage."
   echo " eg: $0 10.x s3 -> Lists the packages in the currently published stble, testing, and unstable snapshots on s3."
   exit 1
 fi
 
-target="filesystem:public:"
+target="s3:s3:"
 if [ $# -eq 2 ]; then
-  target="s3:s3:"
+  target="$2"
 fi
 
 aptly -config=./aptly.conf publish show $1 $target | grep snapshot | cut -f 2 -d ":" | cut -f 1 -d "[" | sort | while read line

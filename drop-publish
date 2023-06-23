@@ -1,10 +1,16 @@
 #!/bin/bash
 
-if [ $# -ne 1 ];
+if [ $# -lt 1 -o $# -gt 2 ];
 then
-  echo "Usage: $0 branch -> Drops all publication of a given branch."
-  echo " eg: $0 10.x -> Drops publication of everything 10.x related"
+  echo "Usage: $0 branch [storage]-> Drops all publication of a given branch in a given storage."
+  echo " eg: $0 10.x: -> Drops publication of everything 10.x related in the default storage"
+  echo " eg: $0 10.x s3: -> Drops publication of everything 10.x related in storage s3"
   exit 1
 fi
 
-aptly -config=./aptly.conf publish drop $1 filesystem:public:
+target="s3:s3:"
+if [ $# -eq 2 ]; then
+  target="$2"
+fi
+
+aptly -config=./aptly.conf publish drop $1 $target

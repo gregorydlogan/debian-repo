@@ -2,24 +2,23 @@
 
 if [ $# -lt 1 -o $# -gt 3 ];
 then
-  echo "Usage: $0 branch [key_id] [filesystem/s3]-> Creates a snapshot all of the components for the branch, and publishes them with the right Elasticsearch version.  Optionally set the gpg key ID to use for signing."
-  echo " eg: $0 10.x -> Creates three snapshots and publishes them with elasticsearch 7.9"
-  echo " eg: $0 10.x s3 -> Creates three snapshots and publishes them with elasticsearch 7.9 to s3"
-  echo "NOTE: If you are seeing errors about a missing snapshot named \$date-\$branch-es, try running update-mirror.  This script is assuming that update-mirror has been run *today*."
+  echo "Usage: $0 branch [storage] [keyId] -> Creates a snapshot all of the components for the branch, and publishes them with the right Elastic/Opensearch version into a given storage.  Optionally set the gpg key ID to use for signing."
+  echo " eg: $0 10.x -> Publishes 10.x to the default storage with the default key"
+  echo " eg: $0 10.x s3 -> Publishes 10.x to the s3 storage, with the default key"
+  echo " eg: $0 10.x other abc123 -> Publishes 10.x signed by abc123 to the 'other' storage"
+  echo "NOTE: If you are seeing errors about a missing snapshot named \$date-\$branch-(os|es), try running update-mirror.  This script is assuming that update-mirror has been run *today*."
   exit 1
 fi
 
 today=`date --utc +%FT%H%M%SZ`
 branch=$1
-keyId="3259FFB3967266533FCD4B249A7EA8E5B3820B26"
+target="s3:s3:"
 if [ $# -ge 2 ]; then
-  keyId="$2"
+  target="$2"
 fi
-target="filesystem"
-if [ $# -eq 3 ]; then
-  target="s3:s3"
-else
-  target="filesystem:public"
+keyId="3259FFB3967266533FCD4B249A7EA8E5B3820B26"
+if [ $# -ge 3 ]; then
+  keyId="$3"
 fi
 
 for comp in stable testing unstable; do
@@ -49,11 +48,11 @@ for comp in stable testing unstable; do
   fi
 done
 
-if [ -z "`aptly -config=./aptly.conf publish list -raw | grep $target | grep $branch`" ]; then
+if [ -z "`aptly -config=./aptly.conf publish list -raw | grep "$target" | grep $branch`" ]; then
   #Publish the new branch
-  aptly -config=./aptly.conf publish snapshot -gpg-key="$keyId" -component=stable,testing,unstable -distribution=$branch $today-$branch-stable $today-$branch-testing $today-$branch-unstable $target:
+  aptly -config=./aptly.conf publish snapshot -gpg-key="$keyId" -component=stable,testing,unstable -distribution=$branch $today-$branch-stable $today-$branch-testing $today-$branch-unstable $target
 else
   for comp in stable testing unstable; do
-    aptly -config=./aptly.conf publish switch -gpg-key="$keyId" -component=$comp $branch $target: $today-$branch-$comp
+    aptly -config=./aptly.conf publish switch -gpg-key="$keyId" -component=$comp $branch $target $today-$branch-$comp
   done
 fi
