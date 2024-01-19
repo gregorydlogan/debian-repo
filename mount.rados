@@ -1,19 +1,24 @@
 #!/bin/bash
 
+export AWSACCESSKEYID="$AWSACCESSKEYID"
+export AWSSECRETACCESSKEY="$AWSSECRETACCESSKEY"
+
 ENDPOINT="https://radosgw.public.os.wwu.de/"
 BUCKET="opencast-ci"
 PARAMS="-o use_path_request_style -o del_cache -o url=$ENDPOINT -o uid=1000,gid=1000,umask=0000"
+MOUNTPOINT="aptly"
 
+mkdir -p $MOUNTPOINT
 
-s3fs $PARAMS $BUCKET:/repo/debs aptly
+s3fs $PARAMS $BUCKET:/repo/debs $MOUNTPOINT
 #Did the mount work?  This may fail depending on how the pseudo-directory was created in S3.
-if [ -z "`mount | grep aptly`" ]; then
+if [ -z "`mount | grep s3fs`" ]; then
   #Mount the raw bucket
-  s3fs $PARAMS $BUCKET aptly
+  s3fs $PARAMS $BUCKET $MOUNTPOINT
   #Make a nonsense change to the pseudo-directory so that s3fs thinks it's a directory
-  chmod 777 aptly/repo/debs
+  chmod 777 $MOUNTPOINT/repo/debs
   sync
-  fusermount -u aptly
+  fusermount -u $MOUNTPOINT
   #And try again :)
-  s3fs $PARAMS $BUCKET:/repo/debs aptly
+  s3fs $PARAMS $BUCKET:/repo/debs $MOUNTPOINT
 fi
