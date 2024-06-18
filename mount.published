@@ -1,0 +1,24 @@
+#!/bin/bash
+
+export AWSACCESSKEYID="$AWSACCESSKEYID"
+export AWSSECRETACCESSKEY="$AWSSECRETACCESSKEY"
+
+ENDPOINT="http://s3.loganite.ca:9000/"
+BUCKET="opencast-packages"
+PARAMS="-o sigv2 -o use_path_request_style -o del_cache -o url=$ENDPOINT -o uid=1000,gid=1000,umask=0000"
+MOUNTPOINT="/builder/s3/repo/published"
+
+mkdir -p $MOUNTPOINT
+
+s3fs $PARAMS $BUCKET $MOUNTPOINT
+#Did the mount work?  This may fail depending on how the pseudo-directory was created in S3.
+if [ -z "`mount | grep s3fs`" ]; then
+  #Mount the raw bucket
+  s3fs $PARAMS $BUCKET $MOUNTPOINT
+  #Make a nonsense change to the pseudo-directory so that s3fs thinks it's a directory
+  chmod 777 $MOUNTPOINT/debian
+  sync
+  fusermount -u $MOUNTPOINT
+  #And try again :)
+  s3fs $PARAMS $BUCKET $MOUNTPOINT
+fi
