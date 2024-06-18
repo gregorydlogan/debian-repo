@@ -1,0 +1,32 @@
+#!/bin/bash
+
+LOCAL_MOUNT="/builder/s3/repo/published"
+
+if [ ! -d "$LOCAL_MOUNT/debian" ]; then
+  echo "$LOCAL_MOUNT/debian does not appear to be a directory, is the mount up?"
+  exit 1
+fi
+
+dryrun=""
+if [ $# -ge 1 ]; then
+  echo "Running in dry run mode!"
+  dryrun="-n"
+fi
+
+common="-vrP --host=radosgw.public.os.wwu.de --host-bucket=rados.public.os.wwu.de"
+
+#Copy the pool files up, but don't delete anything yet
+echo "Syncing pool"
+s3cmd $dryrun $common --exclude "*unstable*" sync $LOCAL_MOUNT/debian/pool/ s3://opencast-pkg/debian/pool/ || exit 1
+#Update the dists.  If we remove a dist, then remove it upstream as well?
+echo "Syncing dists"
+s3cmd $dryrun $common --delete-removed --exclude "*unstable*" sync $LOCAL_MOUNT/debian/dists/ s3://opencast-pkg/debian/dists/ || exit 1
+#Nothing should be referencing these files anymore, so they can go.
+#NB: This is *just* the testing repo
+if [ -d "$LOCAL_MOUNT/debian/pool/testing" ]; then
+  echo "Syncing pool/testing"
+  s3cmd $dryrun $common --exclude "*unstable*" --exclude "*stable*" --delete-removed sync $LOCAL_MOUNT/debian/pool/testing/ s3://opencast-pkg/debian/pool/testing/
+else
+  echo "Removing pool/testing since it doesn't exist locally"
+  s3cmd $dryrun $common rm s3://opencast-pkg/debian/pool/testing
+fi
