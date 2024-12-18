@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ $# -lt 2 -o $# -gt 3 ];
+then
+  echo "Usage: $0 branch mirror [component] -> Lists the packages in the appropriate mirror."
+  echo " eg: $0 16.x os -> Lists the packages in the 16.x stable OpenSearch mirror."
+  echo " eg: $0 16.x os testing -> Lists the packages in the 16.x testing OpenSearch mirror."
+  exit 1
+fi
+
+component="stable"
+if [ $# -eq 3 ]; then
+  component="$3"
+fi
+
+aptly -config=./aptly.conf mirror show -with-packages $2-$1-$component
