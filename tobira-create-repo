@@ -1,3 +1,0 @@
-#!/bin/bash
-
-aptly -config=./aptly.conf repo create -comment="Tobira packages" -distribution="tobira" -component=stable tobira
