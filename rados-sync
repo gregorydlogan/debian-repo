@@ -13,7 +13,7 @@ if [ $# -ge 1 ]; then
   dryrun="-n"
 fi
 
-common="-vrP --host=radosgw.public.os.wwu.de --host-bucket=rados.public.os.wwu.de"
+common="-vrP --progress --host=radosgw.public.os.wwu.de --host-bucket=rados.public.os.wwu.de"
 
 #Copy the pool files up, but don't delete anything yet
 echo "Syncing pool"
