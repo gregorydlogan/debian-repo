@@ -19,13 +19,9 @@ for comp in stable testing unstable; do
   aptly -config=./aptly.conf repo create -comment="$branch $comp packages" -distribution="$branch" -component=$comp $branch-$comp
 done
 
-./create-es-mirror $branch 7.10.2 7.10.3
-./create-os-mirror $branch 1.3.3 2.0.0
-./drop-mirror es $branch testing
+./create-os-mirror $branch 3.9.0 4.0.0
 ./drop-mirror os $branch testing
-./drop-mirror es $branch unstable
 ./drop-mirror os $branch unstable
-./update-mirror $branch stable es
 ./update-mirror $branch stable os
 
 

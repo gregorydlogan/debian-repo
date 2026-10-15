@@ -2,7 +2,7 @@ Before everythign else: build-keys -> creates/updates the signing keystore.  Do 
 
 Publishing a new branch:
 - create-branch [branch]
-- create-es-mirror [branch] [version] [verision++]
+- create-os-mirror [branch] [version] [verision++]
 - update-mirror [branch] [component] -> Start with the stable component, only needs testing or unstable if we're playing with ES versions (see below)
 - include-binaries [branch] [component] [changes file]
 - publish-branch [branch]
